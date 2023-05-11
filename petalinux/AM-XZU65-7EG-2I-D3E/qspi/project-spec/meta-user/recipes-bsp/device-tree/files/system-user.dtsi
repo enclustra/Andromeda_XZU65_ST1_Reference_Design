@@ -1,0 +1,7 @@
+/include/ "system-conf.dtsi"
+/ {
+	model = "Enclustra AM-XZU65-7EG-2I-D3E SOM";
+};
+#include "zynqmp_enclustra_common.dtsi"
+#include "zynqmp_enclustra_andromeda_xzu65.dtsi"
+#include "zynqmp_enclustra_mercury_st1.dtsi"

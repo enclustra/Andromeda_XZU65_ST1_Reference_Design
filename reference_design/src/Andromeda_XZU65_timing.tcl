@@ -1,5 +1,5 @@
-# ----------------------------------------------------------------------------------
-# Copyright (c) 2023 by Enclustra GmbH, Switzerland.
+# ----------------------------------------------------------------------------------------------------
+# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -17,9 +17,5 @@
 # HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # PRODUCT OR THE USE OR OTHER DEALINGS IN THE PRODUCT.
+# ----------------------------------------------------------------------------------------------------
 
-# Place GMII to RGMII converter in one single clock region
-create_pblock pblock_gmii_to_rgmii
-add_cells_to_pblock [get_pblocks pblock_gmii_to_rgmii] [get_cells -quiet [list i_gmii2rgmii]]
-resize_pblock [get_pblocks pblock_gmii_to_rgmii] -add CLOCKREGION_[get_clock_regions -of_objects [get_sites L8]]
-set_property CONTAIN_ROUTING true [get_pblocks pblock_gmii_to_rgmii]

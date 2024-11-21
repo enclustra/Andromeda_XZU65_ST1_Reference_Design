@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2022 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -21,14 +21,14 @@
 
 # Project settings for Andromeda XZU65 Reference Design
 # Valid module codes
-# AM-XZU65-7EG-2I-D3E
 # AM-XZU65-7EV-2I-D3E
 # AM-XZU65-11EG-2I-D3E
 
 # ----------------------------------------------------------------------------------------------------
 # Modify this variable to select your module
-if {![info exists module_name]} {set module_name AM-XZU65-7EG-2I-D3E}
+if {![info exists module_name]} {set module_name AM-XZU65-7EV-2I-D3E}
 if {![info exists baseboard]}   {set baseboard ST1}
+if {![info exists vivado_dir]}   {set vivado_dir [file join Vivado ${module_name}] }
 # ----------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------
@@ -42,9 +42,6 @@ set module Andromeda_XZU65
 set family zynqmp
 
 switch $module_name {
-  AM-XZU65-7EG-2I-D3E {
-    set part xczu7eg-ffvc1156-2-i 
-  }
   AM-XZU65-7EV-2I-D3E {
     set part xczu7ev-ffvc1156-2-i 
   }

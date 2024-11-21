@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Copyright (c) 2022 by Enclustra GmbH, Switzerland.
+-- Copyright (c) 2024 by Enclustra GmbH, Switzerland.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy of
 -- this hardware, software, firmware, and associated documentation files (the
@@ -25,6 +25,9 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+
+library unisim;
+use unisim.vcomponents.all;
 
 ----------------------------------------------------------------------------------------------------
 -- entity declaration
@@ -207,24 +210,24 @@ entity Andromeda_XZU65_ST1 is
     IO4_D7_N                       : inout   std_logic;
     
     -- MIPI0
-    MIPI0_D0_N                     : inout   std_logic;
-    MIPI0_D0_P                     : inout   std_logic;
-    MIPI0_D1_N                     : inout   std_logic;
-    MIPI0_D1_P                     : inout   std_logic;
-    MIPI0_CLK_D0LP_N               : inout   std_logic;
-    MIPI0_CLK_D0LP_P               : inout   std_logic;
-    MIPI0_CLK_N                    : inout   std_logic;
-    MIPI0_CLK_P                    : inout   std_logic;
+    MIPI0_D0_N                     : in      std_logic;
+    MIPI0_D0_P                     : in      std_logic;
+    MIPI0_D1_N                     : in      std_logic;
+    MIPI0_D1_P                     : in      std_logic;
+    MIPI0_CLK_D0LP_N               : in      std_logic;
+    MIPI0_CLK_D0LP_P               : in      std_logic;
+    MIPI0_CLK_N                    : in      std_logic;
+    MIPI0_CLK_P                    : in      std_logic;
     
     -- MIPI1
-    MIPI1_D0_N                     : inout   std_logic;
-    MIPI1_D0_P                     : inout   std_logic;
-    MIPI1_D1_N                     : inout   std_logic;
-    MIPI1_D1_P                     : inout   std_logic;
-    MIPI1_CLK_D0LP_N               : inout   std_logic;
-    MIPI1_CLK_D0LP_P               : inout   std_logic;
-    MIPI1_CLK_N                    : inout   std_logic;
-    MIPI1_CLK_P                    : inout   std_logic;
+    MIPI1_D0_N                     : in      std_logic;
+    MIPI1_D0_P                     : in      std_logic;
+    MIPI1_D1_N                     : in      std_logic;
+    MIPI1_D1_P                     : in      std_logic;
+    MIPI1_CLK_D0LP_N               : in      std_logic;
+    MIPI1_CLK_D0LP_P               : in      std_logic;
+    MIPI1_CLK_N                    : in      std_logic;
+    MIPI1_CLK_P                    : in      std_logic;
     
     -- Oscillator 100 MHz
     CLK_100_CAL                    : in      std_logic;
@@ -265,7 +268,11 @@ entity Andromeda_XZU65_ST1 is
     LED2                           : out     std_logic;
     LED3                           : out     std_logic;
     
-    -- XZU65 LED
+    -- VMON multiplexer address pins
+    VMON_A0                        : out     std_logic;
+    VMON_A1                        : out     std_logic;
+    
+    -- LED
     XZU65_LED0_N                   : out     std_logic;
     XZU65_LED1_N                   : out     std_logic;
     XZU65_LED2_N                   : out     std_logic;
@@ -283,7 +290,6 @@ architecture rtl of Andromeda_XZU65_ST1 is
       Clk100              : out    std_logic;
       Clk50               : out    std_logic;
       Rst_N               : out    std_logic;
-      LED_N_PL            : out    std_logic_vector(3 downto 0);
       C0_SYS_CLK_clk_n    : in     std_logic;
       C0_SYS_CLK_clk_p    : in     std_logic;
       C0_DDR4_act_n       : out    std_logic;
@@ -319,10 +325,20 @@ architecture rtl of Andromeda_XZU65_ST1 is
       GMII_tx_clk         : in     std_logic;
       GMII_tx_en          : out    std_logic;
       GMII_tx_er          : out    std_logic;
-      GMII_txd            : out    std_logic_vector(7 downto 0)
+      GMII_txd            : out    std_logic_vector(7 downto 0);
+      VMON_A              : out    std_logic_vector(1 downto 0);
+      LED_N_PL            : out    std_logic_vector(3 downto 0)
     );
     
   end component Andromeda_XZU65;
+  component IBUFDS is
+      port (
+        O : out STD_LOGIC;
+        I : in STD_LOGIC;
+        IB : in STD_LOGIC
+      );
+    end component IBUFDS;
+  
   
   component OBUFDS is
     port (
@@ -379,7 +395,6 @@ architecture rtl of Andromeda_XZU65_ST1 is
   signal Clk100           : std_logic;
   signal Clk50            : std_logic;
   signal Rst_N            : std_logic;
-  signal LED_N_PL         : std_logic_vector(3 downto 0);
   signal MDIO_mdio_i      : std_logic;
   signal MDIO_mdio_o      : std_logic;
   signal MDIO_mdio_t      : std_logic;
@@ -399,7 +414,13 @@ architecture rtl of Andromeda_XZU65_ST1 is
   signal GMII_tx_en       : std_logic;
   signal GMII_tx_er       : std_logic;
   signal GMII_txd         : std_logic_vector(7 downto 0);
+  signal VMON_A           : std_logic_vector(1 downto 0);
+  signal LED_N_PL         : std_logic_vector(3 downto 0);
   signal LedCount         : unsigned(23 downto 0);
+  
+  ----------------------------------------------------------------------------------------------------
+  -- attribute declarations
+  ----------------------------------------------------------------------------------------------------
 
 begin
   
@@ -411,7 +432,6 @@ begin
       Clk100               => Clk100,
       Clk50                => Clk50,
       Rst_N                => Rst_N,
-      LED_N_PL             => LED_N_PL,
       C0_SYS_CLK_clk_n     => CLK100_PL_N,
       C0_SYS_CLK_clk_p     => CLK100_PL_P,
       C0_DDR4_act_n        => DDR4PL_ACT_N,
@@ -447,8 +467,17 @@ begin
       GMII_tx_clk          => GMII_tx_clk,
       GMII_tx_en           => GMII_tx_en,
       GMII_tx_er           => GMII_tx_er,
-      GMII_txd             => GMII_txd
+      GMII_txd             => GMII_txd,
+      VMON_A               => VMON_A,
+      LED_N_PL             => LED_N_PL
     );
+  
+  CLK_USR_buf: component IBUFDS
+  port map (
+  	O => open,
+  	I => CLK_USR_P,
+  	IB => CLK_USR_N
+  );
   
   hdmi_clock_buf: component OBUFDS
     port map (
@@ -456,23 +485,6 @@ begin
       O => HDMI_CLK_P,
       OB => HDMI_CLK_N
     );
-  
-  process (Clk50)
-  begin
-    if rising_edge (Clk50) then
-      if Rst_N = '0' then
-        LedCount    <= (others => '0');
-      else
-        LedCount    <= LedCount + 1;
-      end if;
-    end if;
-  end process;
-  
-  XZU65_LED0_N <= LedCount(LedCount'high);
-  XZU65_LED1_N <= LED_N_PL(1);
-  XZU65_LED2_N <= LED_N_PL(2);
-  XZU65_LED3_N <= LED_N_PL(3);
-  
   MDIO_mdio_iobuf: component IOBUF
     port map (
       I => MDIO_mdio_o,
@@ -514,5 +526,26 @@ begin
     );
   
   ETH1_RESET_N        <= ETH_resetn;
+  LED2 <= 'Z';
+  LED3 <= 'Z';
+  
+  VMON_A0 <= VMON_A(0);
+  VMON_A1 <= VMON_A(1);
+  
+  process (Clk50)
+  begin
+    if rising_edge (Clk50) then
+      if Rst_N = '0' then
+        LedCount    <= (others => '0');
+      else
+        LedCount    <= LedCount + 1;
+      end if;
+    end if;
+  end process;
+  
+  XZU65_LED0_N <= LedCount(LedCount'high);
+  XZU65_LED1_N <= LED_N_PL(1);
+  XZU65_LED2_N <= LED_N_PL(2);
+  XZU65_LED3_N <= LED_N_PL(3);
   
 end rtl;

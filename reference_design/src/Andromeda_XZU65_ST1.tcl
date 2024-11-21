@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2022 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -85,12 +85,20 @@ set_property -dict {PACKAGE_PIN F15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK
 set_property -dict {PACKAGE_PIN G15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK_P}]
 
 # Optional reference oscillator
+# set_property PACKAGE_PIN AA9   [get_ports {CLK_REF_N}] # GTH
+# set_property PACKAGE_PIN AA10  [get_ports {CLK_REF_P}] # GTH
 
 # Clock Generator CLK1
+# set_property PACKAGE_PIN W9    [get_ports {CLK_REF0_N}] # GTH
+# set_property PACKAGE_PIN W10   [get_ports {CLK_REF0_P}] # GTH
 
 # Clock Generator CLK2
+# set_property PACKAGE_PIN AC9   [get_ports {CLK_REF1_N}] # GTH
+# set_property PACKAGE_PIN AC10  [get_ports {CLK_REF1_P}] # GTH
 
 # Clock Generator CLK3
+# set_property PACKAGE_PIN R9    [get_ports {CLK_REF2_N}] # GTH
+# set_property PACKAGE_PIN R10   [get_ports {CLK_REF2_P}] # GTH
 
 # Clock Generator CLK0
 set_property -dict {PACKAGE_PIN F21   IOSTANDARD DIFF_SSTL18_I} [get_ports {CLK_USR_N}]
@@ -103,6 +111,30 @@ set_property -dict {PACKAGE_PIN D4    IOSTANDARD LVCMOS18  } [get_ports {FMC_HA0
 set_property -dict {PACKAGE_PIN E4    IOSTANDARD LVCMOS18  } [get_ports {FMC_HA03_P}]
 set_property -dict {PACKAGE_PIN J17   IOSTANDARD LVCMOS18  } [get_ports {FMC_HA04_N}]
 set_property -dict {PACKAGE_PIN K17   IOSTANDARD LVCMOS18  } [get_ports {FMC_HA04_P}]
+# set_property PACKAGE_PIN T3    [get_ports {FMC_HA05_N}] # GTH
+# set_property PACKAGE_PIN T4    [get_ports {FMC_HA05_P}] # GTH
+# set_property PACKAGE_PIN G1    [get_ports {FMC_HA06_N}] # GTH
+# set_property PACKAGE_PIN G2    [get_ports {FMC_HA06_P}] # GTH
+# set_property PACKAGE_PIN L5    [get_ports {FMC_HA07_N}] # GTH
+# set_property PACKAGE_PIN L6    [get_ports {FMC_HA07_P}] # GTH
+# set_property PACKAGE_PIN J1    [get_ports {FMC_HA08_N}] # GTH
+# set_property PACKAGE_PIN J2    [get_ports {FMC_HA08_P}] # GTH
+# set_property PACKAGE_PIN H3    [get_ports {FMC_HA09_N}] # GTH
+# set_property PACKAGE_PIN H4    [get_ports {FMC_HA09_P}] # GTH
+# set_property PACKAGE_PIN V3    [get_ports {FMC_HA10_N}] # GTH
+# set_property PACKAGE_PIN V4    [get_ports {FMC_HA10_P}] # GTH
+# set_property PACKAGE_PIN U5    [get_ports {FMC_HA11_N}] # GTH
+# set_property PACKAGE_PIN U6    [get_ports {FMC_HA11_P}] # GTH
+# set_property PACKAGE_PIN U9    [get_ports {FMC_HA12_N}] # GTH
+# set_property PACKAGE_PIN U10   [get_ports {FMC_HA12_P}] # GTH
+# set_property PACKAGE_PIN V7    [get_ports {FMC_HA13_N}] # GTH
+# set_property PACKAGE_PIN V8    [get_ports {FMC_HA13_P}] # GTH
+# set_property PACKAGE_PIN AP3   [get_ports {FMC_HA14_N}] # GTH
+# set_property PACKAGE_PIN AP4   [get_ports {FMC_HA14_P}] # GTH
+# set_property PACKAGE_PIN AN1   [get_ports {FMC_HA15_N}] # GTH
+# set_property PACKAGE_PIN AN2   [get_ports {FMC_HA15_P}] # GTH
+# set_property PACKAGE_PIN AK3   [get_ports {FMC_HA16_N}] # GTH
+# set_property PACKAGE_PIN AK4   [get_ports {FMC_HA16_P}] # GTH
 set_property -dict {PACKAGE_PIN A21   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA02_N}]
 set_property -dict {PACKAGE_PIN A20   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA02_P}]
 set_property -dict {PACKAGE_PIN C19   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA03_N}]
@@ -163,6 +195,44 @@ set_property -dict {PACKAGE_PIN J14   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA3
 set_property -dict {PACKAGE_PIN K14   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA32_P}]
 set_property -dict {PACKAGE_PIN J11   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA33_N}]
 set_property -dict {PACKAGE_PIN K12   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA33_P}]
+# set_property PACKAGE_PIN AC5   [get_ports {FMC_DP0_C2M_N}] # GTH
+# set_property PACKAGE_PIN AC6   [get_ports {FMC_DP0_C2M_P}] # GTH
+# set_property PACKAGE_PIN AC1   [get_ports {FMC_DP0_M2C_N}] # GTH
+# set_property PACKAGE_PIN AC2   [get_ports {FMC_DP0_M2C_P}] # GTH
+# set_property PACKAGE_PIN AA5   [get_ports {FMC_DP1_C2M_N}] # GTH
+# set_property PACKAGE_PIN AA6   [get_ports {FMC_DP1_C2M_P}] # GTH
+# set_property PACKAGE_PIN AB3   [get_ports {FMC_DP1_M2C_N}] # GTH
+# set_property PACKAGE_PIN AB4   [get_ports {FMC_DP1_M2C_P}] # GTH
+# set_property PACKAGE_PIN Y3    [get_ports {FMC_DP2_C2M_N}] # GTH
+# set_property PACKAGE_PIN Y4    [get_ports {FMC_DP2_C2M_P}] # GTH
+# set_property PACKAGE_PIN AA1   [get_ports {FMC_DP2_M2C_N}] # GTH
+# set_property PACKAGE_PIN AA2   [get_ports {FMC_DP2_M2C_P}] # GTH
+# set_property PACKAGE_PIN W5    [get_ports {FMC_DP3_C2M_N}] # GTH
+# set_property PACKAGE_PIN W6    [get_ports {FMC_DP3_C2M_P}] # GTH
+# set_property PACKAGE_PIN W1    [get_ports {FMC_DP3_M2C_N}] # GTH
+# set_property PACKAGE_PIN W2    [get_ports {FMC_DP3_M2C_P}] # GTH
+# set_property PACKAGE_PIN AE5   [get_ports {FMC_DP4_C2M_N}] # GTH
+# set_property PACKAGE_PIN AE6   [get_ports {FMC_DP4_C2M_P}] # GTH
+# set_property PACKAGE_PIN AF3   [get_ports {FMC_DP4_M2C_N}] # GTH
+# set_property PACKAGE_PIN AF4   [get_ports {FMC_DP4_M2C_P}] # GTH
+# set_property PACKAGE_PIN AH3   [get_ports {FMC_DP5_C2M_N}] # GTH
+# set_property PACKAGE_PIN AH4   [get_ports {FMC_DP5_C2M_P}] # GTH
+# set_property PACKAGE_PIN AJ1   [get_ports {FMC_DP5_M2C_N}] # GTH
+# set_property PACKAGE_PIN AJ2   [get_ports {FMC_DP5_M2C_P}] # GTH
+# set_property PACKAGE_PIN AD3   [get_ports {FMC_DP6_C2M_N}] # GTH
+# set_property PACKAGE_PIN AD4   [get_ports {FMC_DP6_C2M_P}] # GTH
+# set_property PACKAGE_PIN AE1   [get_ports {FMC_DP6_M2C_N}] # GTH
+# set_property PACKAGE_PIN AE2   [get_ports {FMC_DP6_M2C_P}] # GTH
+# set_property PACKAGE_PIN AG5   [get_ports {FMC_DP7_C2M_N}] # GTH
+# set_property PACKAGE_PIN AG6   [get_ports {FMC_DP7_C2M_P}] # GTH
+# set_property PACKAGE_PIN AG1   [get_ports {FMC_DP7_M2C_N}] # GTH
+# set_property PACKAGE_PIN AG2   [get_ports {FMC_DP7_M2C_P}] # GTH
+# set_property PACKAGE_PIN L1    [get_ports {FMC_HA00_CC_N}] # GTH
+# set_property PACKAGE_PIN L2    [get_ports {FMC_HA00_CC_P}] # GTH
+# set_property PACKAGE_PIN K3    [get_ports {FMC_HA01_CC_N}] # GTH
+# set_property PACKAGE_PIN K4    [get_ports {FMC_HA01_CC_P}] # GTH
+# set_property PACKAGE_PIN AL1   [get_ports {FMC_HA17_N}] # GTH
+# set_property PACKAGE_PIN AL2   [get_ports {FMC_HA17_P}] # GTH
 set_property -dict {PACKAGE_PIN E23   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA00_CC_N}]
 set_property -dict {PACKAGE_PIN F23   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA00_CC_P}]
 set_property -dict {PACKAGE_PIN G11   IOSTANDARD LVCMOS18  } [get_ports {FMC_LA01_CC_N}]
@@ -175,9 +245,19 @@ set_property -dict {PACKAGE_PIN F10   IOSTANDARD LVCMOS18  } [get_ports {FMC_CLK
 set_property -dict {PACKAGE_PIN G10   IOSTANDARD LVCMOS18  } [get_ports {FMC_CLK0_M2C_P}]
 set_property -dict {PACKAGE_PIN G9    IOSTANDARD LVCMOS18  } [get_ports {FMC_CLK1_M2C_N}]
 set_property -dict {PACKAGE_PIN H9    IOSTANDARD LVCMOS18  } [get_ports {FMC_CLK1_M2C_P}]
+# set_property PACKAGE_PIN Y7    [get_ports {FMC_GCLK0_M2C_N}] # GTH
+# set_property PACKAGE_PIN Y8    [get_ports {FMC_GCLK0_M2C_P}] # GTH
+# set_property PACKAGE_PIN AB7   [get_ports {FMC_GCLK1_M2C_N}] # GTH
+# set_property PACKAGE_PIN AB8   [get_ports {FMC_GCLK1_M2C_P}] # GTH
 
 # HDMI
 set_property -dict {PACKAGE_PIN D6    IOSTANDARD LVCMOS18  } [get_ports {HDMI_HPD}]
+# set_property PACKAGE_PIN AN5   [get_ports {HDMI_D0_N}] # GTH
+# set_property PACKAGE_PIN AN6   [get_ports {HDMI_D0_P}] # GTH
+# set_property PACKAGE_PIN AM3   [get_ports {HDMI_D1_N}] # GTH
+# set_property PACKAGE_PIN AM4   [get_ports {HDMI_D1_P}] # GTH
+# set_property PACKAGE_PIN AL5   [get_ports {HDMI_D2_N}] # GTH
+# set_property PACKAGE_PIN AL6   [get_ports {HDMI_D2_P}] # GTH
 set_property -dict {PACKAGE_PIN L16   IOSTANDARD LVDS      } [get_ports {HDMI_CLK_N}]
 set_property -dict {PACKAGE_PIN L17   IOSTANDARD LVDS      } [get_ports {HDMI_CLK_P}]
 
@@ -376,12 +456,20 @@ set_property -dict {PACKAGE_PIN K8    IOSTANDARD LVCMOS18  } [get_ports {ETH1_RX
 set_property -dict {PACKAGE_PIN G8    IOSTANDARD LVCMOS18  } [get_ports {ETH1_TXCTL}]
 
 # SFP
+# set_property PACKAGE_PIN N1    [get_ports {SFP_RX_N}] # GTH
+# set_property PACKAGE_PIN N2    [get_ports {SFP_RX_P}] # GTH
+# set_property PACKAGE_PIN M3    [get_ports {SFP_TX_N}] # GTH
+# set_property PACKAGE_PIN M4    [get_ports {SFP_TX_P}] # GTH
 
 # ST1 LED
 set_property -dict {PACKAGE_PIN D17   IOSTANDARD LVCMOS18  } [get_ports {LED2}]
 set_property -dict {PACKAGE_PIN C17   IOSTANDARD LVCMOS18  } [get_ports {LED3}]
 
-# XZU65 LED
+# VMON multiplexer address pins
+set_property -dict {PACKAGE_PIN M10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A0}]
+set_property -dict {PACKAGE_PIN L10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A1}]
+
+# LED
 set_property -dict {PACKAGE_PIN AD20  IOSTANDARD LVCMOS12  } [get_ports {XZU65_LED0_N}]
 set_property -dict {PACKAGE_PIN AE20  IOSTANDARD LVCMOS12  } [get_ports {XZU65_LED1_N}]
 set_property -dict {PACKAGE_PIN AK20  IOSTANDARD LVCMOS12  } [get_ports {XZU65_LED2_N}]

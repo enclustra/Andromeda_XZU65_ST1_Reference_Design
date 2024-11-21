@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2022 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -109,14 +109,8 @@ set_property -dict [ list \
   CONFIG.PSU_MIO_21_PULLUPDOWN {disable} \
   CONFIG.PSU__SD0__PERIPHERAL__IO {MIO 13 .. 22} \
   CONFIG.PSU__SD0__DATA_TRANSFER_MODE {8Bit} \
+  CONFIG.PSU__USE__IRQ0  {1} \
 ] [get_bd_cells zynq_ultra_ps_e]
-
-create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio led
-set_property -dict [ list \
-  CONFIG.C_GPIO_WIDTH {4} \
-  CONFIG.C_ALL_OUTPUTS {1} \
-  CONFIG.C_DOUT_DEFAULT {0x0000000f} \
-] [get_bd_cells led]
 
 create_bd_cell -type ip -vlnv xilinx.com:ip:ddr4 ddr4
 
@@ -163,9 +157,24 @@ set_property -dict [ list \
   CONFIG.PSU__USB0__REF_CLK_FREQ {100} \
 ] [get_bd_cells zynq_ultra_ps_e]
 
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio VMonGpio
+set_property -dict [ list \
+  CONFIG.C_GPIO_WIDTH {2} \
+  CONFIG.C_ALL_OUTPUTS {1} \
+  CONFIG.C_DOUT_DEFAULT {0x00000000} \
+] [get_bd_cells VMonGpio]
+
+create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio led
+set_property -dict [ list \
+  CONFIG.C_GPIO_WIDTH {4} \
+  CONFIG.C_ALL_OUTPUTS {1} \
+  CONFIG.C_DOUT_DEFAULT {0x0000000f} \
+] [get_bd_cells led]
+
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/maxihpm0_lpd_aclk] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
 connect_bd_net [get_bd_pins ps_sys_rst/slowest_sync_clk] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
 connect_bd_net [get_bd_pins ps_sys_rst/ext_reset_in] [get_bd_pins zynq_ultra_ps_e/pl_resetn0]
+connect_bd_net [get_bd_pins system_management_wiz/ip2intc_irpt] [get_bd_pins zynq_ultra_ps_e/pl_ps_irq0]
 set_property generic BG_WIDTH=1 [current_fileset]
 set C0_SYS_CLK [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 C0_SYS_CLK ]
 connect_bd_intf_net [get_bd_intf_ports C0_SYS_CLK] [get_bd_intf_pins ddr4/C0_SYS_CLK]
@@ -202,15 +211,18 @@ connect_bd_net [get_bd_pins clk_wiz_0/resetn] [get_bd_pins zynq_ultra_ps_e/pl_re
 connect_bd_net [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins zynq_ultra_ps_e/pl_clk1]
 
 create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect smartconnect_00
-set_property -dict [list CONFIG.NUM_MI {2} CONFIG.NUM_CLKS {1} CONFIG.NUM_SI {1}] [get_bd_cells smartconnect_00]
+set_property -dict [list CONFIG.NUM_MI {3} CONFIG.NUM_CLKS {1} CONFIG.NUM_SI {1}] [get_bd_cells smartconnect_00]
 connect_bd_intf_net [get_bd_intf_pins zynq_ultra_ps_e/M_AXI_HPM0_LPD] [get_bd_intf_pins smartconnect_00/S00_AXI]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins smartconnect_00/aclk]
 connect_bd_net [get_bd_pins ps_sys_rst/interconnect_aresetn] [get_bd_pins smartconnect_00/aresetn]
 connect_bd_intf_net [get_bd_intf_pins smartconnect_00/M00_AXI ] [get_bd_intf_pins system_management_wiz/S_AXI_LITE]
-connect_bd_intf_net [get_bd_intf_pins smartconnect_00/M01_AXI ] [get_bd_intf_pins led/S_AXI]
+connect_bd_intf_net [get_bd_intf_pins smartconnect_00/M01_AXI ] [get_bd_intf_pins VMonGpio/S_AXI]
+connect_bd_intf_net [get_bd_intf_pins smartconnect_00/M02_AXI ] [get_bd_intf_pins led/S_AXI]
 
 connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins system_management_wiz/s_axi_aresetn]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins system_management_wiz/s_axi_aclk]
+connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins VMonGpio/s_axi_aresetn]
+connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins VMonGpio/s_axi_aclk]
 connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins led/s_axi_aresetn]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins led/s_axi_aclk]
 
@@ -220,6 +232,8 @@ set Clk50 [ create_bd_port -dir O -type clk Clk50]
 connect_bd_net [get_bd_ports Clk50] [get_bd_pins zynq_ultra_ps_e/pl_clk1]
 set Rst_N [ create_bd_port -dir O -type rst Rst_N]
 connect_bd_net [get_bd_ports Rst_N] [get_bd_pins zynq_ultra_ps_e/pl_resetn0]
+set VMON_A [ create_bd_port -dir O -from 1 -to 0 VMON_A]
+connect_bd_net [get_bd_ports VMON_A] [get_bd_pins VMonGpio/gpio_io_o]
 set LED_N_PL [ create_bd_port -dir O -from 3 -to 0 LED_N_PL]
 connect_bd_net [get_bd_ports LED_N_PL] [get_bd_pins led/gpio_io_o]
 assign_bd_address

@@ -1,14 +1,14 @@
-2024-12-05 13:34:15,470 - [DEBUG] Using xsct from : /tools/Xilinx/PetaLinux/2024.1/components/xsct/bin/xsct
-2024-12-05 13:34:15,470 - [INFO] Getting Platform info from HW file
-2024-12-05 13:34:15,470 - [DEBUG] Using the soc_family specified by user:zynqmp
-2024-12-05 13:34:15,487 - [DEBUG] Hardware Configuration:
-2024-12-05 13:34:15,487 - [DEBUG] MACHINE     = "None"
-2024-12-05 13:34:15,487 - [DEBUG] DEVICE_ID   = "xczu7ev"
-2024-12-05 13:34:15,487 - [DEBUG] SOC_FAMILY  = "zynqmp"
-2024-12-05 13:34:15,487 - [DEBUG] SOC_VARIANT = "ev"
-2024-12-05 13:34:15,492 - [INFO] Silentconfig project
-2024-12-05 13:34:15,492 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/config conf /gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/configs/Kconfig
-2024-12-05 13:34:15,497 - [DEBUG] *
+2024-12-12 08:28:24,349 - [DEBUG] Using xsct from : /tools/Xilinx/PetaLinux/2024.1/components/xsct/bin/xsct
+2024-12-12 08:28:24,349 - [INFO] Getting Platform info from HW file
+2024-12-12 08:28:24,349 - [DEBUG] Using the soc_family specified by user:zynqmp
+2024-12-12 08:28:24,398 - [DEBUG] Hardware Configuration:
+2024-12-12 08:28:24,398 - [DEBUG] MACHINE     = "None"
+2024-12-12 08:28:24,399 - [DEBUG] DEVICE_ID   = "xczu7ev"
+2024-12-12 08:28:24,399 - [DEBUG] SOC_FAMILY  = "zynqmp"
+2024-12-12 08:28:24,399 - [DEBUG] SOC_VARIANT = "ev"
+2024-12-12 08:28:24,406 - [INFO] Silentconfig project
+2024-12-12 08:28:24,406 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/config conf /builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/configs/Kconfig
+2024-12-12 08:28:24,411 - [DEBUG] *
 * PetaLinux System Configuration
 *
 ZYNQMP Configuration (SYSTEM_ZYNQMP) [Y/?] y
@@ -304,11 +304,11 @@ user layer 0 (USER_LAYER_0) [${PROOT}/project-spec/meta-enclustra/meta-enclustra
   user layer 1 (USER_LAYER_1) [${PROOT}/project-spec/meta-enclustra/meta-enclustra-module] 
 user layer 2 (USER_LAYER_2) [] 
 #
-# configuration written to /gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/config
+# configuration written to /builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/config
 #
-2024-12-05 13:34:15,539 - [INFO] Silentconfig rootfs
-2024-12-05 13:34:15,539 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfs_config conf /gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfsconfigs/Kconfig
-2024-12-05 13:34:15,550 - [DEBUG] *
+2024-12-12 08:28:24,536 - [INFO] Silentconfig rootfs
+2024-12-12 08:28:24,536 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfs_config conf /builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfsconfigs/Kconfig
+2024-12-12 08:28:24,576 - [DEBUG] *
 * Configuration
 *
 *
@@ -3863,6 +3863,6 @@ Create new Groups (CREATE_NEW_GROUPS) [aie;]
 Add Users to Groups (ADD_USERS_TO_GROUPS) [petalinux:audio,video,aie,input;] 
 Add Users to Sudo users (ADD_USERS_TO_SUDOERS) [petalinux] 
 #
-# configuration written to /gitlab/builds/Petalinux_XZU65_8555227549/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfs_config
+# configuration written to /builds/Petalinux_XZU65_8620941728/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-EMMC/project-spec/configs/rootfs_config
 #
-2024-12-05 13:34:15,553 - [INFO] Generating configuration files
+2024-12-12 08:28:24,580 - [INFO] Generating configuration files

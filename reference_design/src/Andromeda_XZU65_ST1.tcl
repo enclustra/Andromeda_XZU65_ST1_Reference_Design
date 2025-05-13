@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2025 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -39,6 +39,8 @@ set_property -dict {PACKAGE_PIN A22   IOSTANDARD LVCMOS18  } [get_ports {IO0_D6_
 set_property -dict {PACKAGE_PIN A23   IOSTANDARD LVCMOS18  } [get_ports {IO0_D7_N}]
 set_property -dict {PACKAGE_PIN F25   IOSTANDARD LVCMOS18  } [get_ports {IO0_D8_P}]
 set_property -dict {PACKAGE_PIN B23   IOSTANDARD LVCMOS18  } [get_ports {IO0_D9_N}]
+set_property -dict {PACKAGE_PIN E22   IOSTANDARD LVCMOS18  } [get_ports {IO0_CLK_N}]
+set_property -dict {PACKAGE_PIN F22   IOSTANDARD LVCMOS18  } [get_ports {IO0_CLK_P}]
 set_property -dict {PACKAGE_PIN H23   IOSTANDARD LVCMOS18  } [get_ports {IO0_D10_P}]
 set_property -dict {PACKAGE_PIN E20   IOSTANDARD LVCMOS18  } [get_ports {IO0_D11_N}]
 set_property -dict {PACKAGE_PIN B20   IOSTANDARD LVCMOS18  } [get_ports {IO0_D12_P}]
@@ -53,8 +55,6 @@ set_property -dict {PACKAGE_PIN D22   IOSTANDARD LVCMOS18  } [get_ports {IO0_D20
 set_property -dict {PACKAGE_PIN C23   IOSTANDARD LVCMOS18  } [get_ports {IO0_D21_N}]
 set_property -dict {PACKAGE_PIN J21   IOSTANDARD LVCMOS18  } [get_ports {IO0_D22_P}]
 set_property -dict {PACKAGE_PIN J22   IOSTANDARD LVCMOS18  } [get_ports {IO0_D23_N}]
-set_property -dict {PACKAGE_PIN E22   IOSTANDARD LVCMOS18  } [get_ports {IO0_CLK_N}]
-set_property -dict {PACKAGE_PIN F22   IOSTANDARD LVCMOS18  } [get_ports {IO0_CLK_P}]
 
 # Anios 1
 set_property -dict {PACKAGE_PIN G18   IOSTANDARD LVCMOS18  } [get_ports {IO1_D0_P}]
@@ -67,6 +67,8 @@ set_property -dict {PACKAGE_PIN H18   IOSTANDARD LVCMOS18  } [get_ports {IO1_D6_
 set_property -dict {PACKAGE_PIN H17   IOSTANDARD LVCMOS18  } [get_ports {IO1_D7_N}]
 set_property -dict {PACKAGE_PIN K19   IOSTANDARD LVCMOS18  } [get_ports {IO1_D8_P}]
 set_property -dict {PACKAGE_PIN K18   IOSTANDARD LVCMOS18  } [get_ports {IO1_D9_N}]
+set_property -dict {PACKAGE_PIN F15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK_N}]
+set_property -dict {PACKAGE_PIN G15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK_P}]
 set_property -dict {PACKAGE_PIN L15   IOSTANDARD LVCMOS18  } [get_ports {IO1_D10_P}]
 set_property -dict {PACKAGE_PIN K15   IOSTANDARD LVCMOS18  } [get_ports {IO1_D11_N}]
 set_property -dict {PACKAGE_PIN E18   IOSTANDARD LVCMOS18  } [get_ports {IO1_D12_P}]
@@ -81,8 +83,6 @@ set_property -dict {PACKAGE_PIN G14   IOSTANDARD LVCMOS18  } [get_ports {IO1_D20
 set_property -dict {PACKAGE_PIN F13   IOSTANDARD LVCMOS18  } [get_ports {IO1_D21_N}]
 set_property -dict {PACKAGE_PIN L20   IOSTANDARD LVCMOS18  } [get_ports {IO1_D22_P}]
 set_property -dict {PACKAGE_PIN K20   IOSTANDARD LVCMOS18  } [get_ports {IO1_D23_N}]
-set_property -dict {PACKAGE_PIN F15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK_N}]
-set_property -dict {PACKAGE_PIN G15   IOSTANDARD LVCMOS18  } [get_ports {IO1_CLK_P}]
 
 # Optional reference oscillator
 # set_property PACKAGE_PIN AA9   [get_ports {CLK_REF_N}] # GTH
@@ -455,6 +455,12 @@ set_property -dict {PACKAGE_PIN J9    IOSTANDARD LVCMOS18  } [get_ports {ETH1_RE
 set_property -dict {PACKAGE_PIN K8    IOSTANDARD LVCMOS18  } [get_ports {ETH1_RXCTL}]
 set_property -dict {PACKAGE_PIN G8    IOSTANDARD LVCMOS18  } [get_ports {ETH1_TXCTL}]
 
+# PL SYSMON
+set_property -dict {PACKAGE_PIN U17   IOSTANDARD ANALOG    } [get_ports {SYSMON_VN}]
+set_property -dict {PACKAGE_PIN T18   IOSTANDARD ANALOG    } [get_ports {SYSMON_VP}]
+set_property -dict {PACKAGE_PIN M10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A0}]
+set_property -dict {PACKAGE_PIN L10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A1}]
+
 # SFP
 # set_property PACKAGE_PIN N1    [get_ports {SFP_RX_N}] # GTH
 # set_property PACKAGE_PIN N2    [get_ports {SFP_RX_P}] # GTH
@@ -464,10 +470,6 @@ set_property -dict {PACKAGE_PIN G8    IOSTANDARD LVCMOS18  } [get_ports {ETH1_TX
 # ST1 LED
 set_property -dict {PACKAGE_PIN D17   IOSTANDARD LVCMOS18  } [get_ports {LED2}]
 set_property -dict {PACKAGE_PIN C17   IOSTANDARD LVCMOS18  } [get_ports {LED3}]
-
-# VMON multiplexer address pins
-set_property -dict {PACKAGE_PIN M10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A0}]
-set_property -dict {PACKAGE_PIN L10   IOSTANDARD LVCMOS18  } [get_ports {VMON_A1}]
 
 # LED
 set_property -dict {PACKAGE_PIN AD20  IOSTANDARD LVCMOS12  } [get_ports {XZU65_LED0_N}]

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2025 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -28,7 +28,7 @@
 # Modify this variable to select your module
 if {![info exists module_name]} {set module_name AM-XZU65-7EV-2I-D3E}
 if {![info exists baseboard]}   {set baseboard ST1}
-if {![info exists vivado_dir]}   {set vivado_dir [file join Vivado ${module_name}] }
+if {![info exists vivado_dir]} {set vivado_dir [file join Vivado ${module_name}] }
 # ----------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------

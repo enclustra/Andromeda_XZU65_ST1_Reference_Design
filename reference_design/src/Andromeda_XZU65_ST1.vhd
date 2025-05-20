@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Copyright (c) 2024 by Enclustra GmbH, Switzerland.
+-- Copyright (c) 2025 by Enclustra GmbH, Switzerland.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy of
 -- this hardware, software, firmware, and associated documentation files (the
@@ -50,6 +50,8 @@ entity Andromeda_XZU65_ST1 is
     IO0_D7_N                       : inout   std_logic;
     IO0_D8_P                       : inout   std_logic;
     IO0_D9_N                       : inout   std_logic;
+    IO0_CLK_N                      : inout   std_logic;
+    IO0_CLK_P                      : inout   std_logic;
     IO0_D10_P                      : inout   std_logic;
     IO0_D11_N                      : inout   std_logic;
     IO0_D12_P                      : inout   std_logic;
@@ -64,8 +66,6 @@ entity Andromeda_XZU65_ST1 is
     IO0_D21_N                      : inout   std_logic;
     IO0_D22_P                      : inout   std_logic;
     IO0_D23_N                      : inout   std_logic;
-    IO0_CLK_N                      : inout   std_logic;
-    IO0_CLK_P                      : inout   std_logic;
     
     -- Anios 1
     IO1_D0_P                       : inout   std_logic;
@@ -78,6 +78,8 @@ entity Andromeda_XZU65_ST1 is
     IO1_D7_N                       : inout   std_logic;
     IO1_D8_P                       : inout   std_logic;
     IO1_D9_N                       : inout   std_logic;
+    IO1_CLK_N                      : inout   std_logic;
+    IO1_CLK_P                      : inout   std_logic;
     IO1_D10_P                      : inout   std_logic;
     IO1_D11_N                      : inout   std_logic;
     IO1_D12_P                      : inout   std_logic;
@@ -92,8 +94,6 @@ entity Andromeda_XZU65_ST1 is
     IO1_D21_N                      : inout   std_logic;
     IO1_D22_P                      : inout   std_logic;
     IO1_D23_N                      : inout   std_logic;
-    IO1_CLK_N                      : inout   std_logic;
-    IO1_CLK_P                      : inout   std_logic;
     
     -- Clock Generator CLK0
     CLK_USR_N                      : in      std_logic;
@@ -181,8 +181,8 @@ entity Andromeda_XZU65_ST1 is
     
     -- HDMI
     HDMI_HPD                       : in      std_logic;
-    HDMI_CLK_N                     : out     std_logic;
-    HDMI_CLK_P                     : out     std_logic;
+    HDMI_CLK_N                     : inout   std_logic;
+    HDMI_CLK_P                     : inout   std_logic;
     
     -- I2C FPGA
     I2C_SCL_FPGA                   : inout   std_logic;
@@ -264,13 +264,15 @@ entity Andromeda_XZU65_ST1 is
     ETH1_RXD                       : in      std_logic_vector(3 downto 0);
     ETH1_TXD                       : out     std_logic_vector(3 downto 0);
     
+    -- PL SYSMON
+    SYSMON_VN                      : in      std_logic;
+    SYSMON_VP                      : in      std_logic;
+    VMON_A0                        : out     std_logic;
+    VMON_A1                        : out     std_logic;
+    
     -- ST1 LED
     LED2                           : out     std_logic;
     LED3                           : out     std_logic;
-    
-    -- VMON multiplexer address pins
-    VMON_A0                        : out     std_logic;
-    VMON_A1                        : out     std_logic;
     
     -- LED
     XZU65_LED0_N                   : out     std_logic;
@@ -290,6 +292,9 @@ architecture rtl of Andromeda_XZU65_ST1 is
       Clk100              : out    std_logic;
       Clk50               : out    std_logic;
       Rst_N               : out    std_logic;
+      SYSMON_vp           : in     std_logic;
+      SYSMON_vn           : in     std_logic;
+      SYSMON_addr         : out    std_logic_vector(4 downto 0);
       C0_SYS_CLK_clk_n    : in     std_logic;
       C0_SYS_CLK_clk_p    : in     std_logic;
       C0_DDR4_act_n       : out    std_logic;
@@ -326,68 +331,42 @@ architecture rtl of Andromeda_XZU65_ST1 is
       GMII_tx_en          : out    std_logic;
       GMII_tx_er          : out    std_logic;
       GMII_txd            : out    std_logic_vector(7 downto 0);
-      VMON_A              : out    std_logic_vector(1 downto 0);
       LED_N_PL            : out    std_logic_vector(3 downto 0)
     );
-    
   end component Andromeda_XZU65;
-  component IBUFDS is
-      port (
-        O : out STD_LOGIC;
-        I : in STD_LOGIC;
-        IB : in STD_LOGIC
-      );
-    end component IBUFDS;
   
-  
-  component OBUFDS is
+  component en_gmii2rgmii is
     port (
-      I : in STD_LOGIC;
-      O : out STD_LOGIC;
-      OB : out STD_LOGIC
+      Clk125          : in  std_logic;
+      Clk125_90       : in  std_logic;
+      Clk25           : in  std_logic;
+      Clk10           : in  std_logic;
+      Resetn          : in  std_logic;
+  
+      GMII_col        : out std_logic;
+      GMII_crs        : out std_logic;
+      GMII_rx_clk     : out std_logic;
+      GMII_rx_dv      : out std_logic;
+      GMII_rx_er      : out std_logic;
+      GMII_rxd        : out std_logic_vector(7 downto 0);
+      GMII_speed_mode : in  std_logic_vector(2 downto 0);
+      GMII_tx_clk     : out std_logic;
+      GMII_tx_en      : in  std_logic;
+      GMII_tx_er      : in  std_logic;
+      GMII_txd        : in  std_logic_vector(7 downto 0);
+  
+      RGMII_rxd       : in  std_logic_vector(3 downto 0);
+      RGMII_rxclk     : in  std_logic;
+      RGMII_rxctl     : in  std_logic;
+      RGMII_txd       : out std_logic_vector(3 downto 0);
+      RGMII_txclk     : out std_logic;
+      RGMII_txctl     : out std_logic;
+  
+      Speed1000En     : out std_logic;
+      Speed100En      : out std_logic;
+      Speed10En       : out std_logic
     );
-  end component OBUFDS;
-  component IOBUF is
-  port (
-    I : in STD_LOGIC;
-    O : out STD_LOGIC;
-    T : in STD_LOGIC;
-    IO : inout STD_LOGIC
-  );
-  end component IOBUF;
-  
-  component Andromeda_XZU65_gmii2rgmii is
-  port (
-    Clk125          : in  std_logic;
-    Clk125_90       : in  std_logic;
-    Clk25           : in  std_logic;
-    Clk10           : in  std_logic;
-    Resetn          : in  std_logic;
-  
-    GMII_col        : out std_logic;
-    GMII_crs        : out std_logic;
-    GMII_rx_clk     : out std_logic;
-    GMII_rx_dv      : out std_logic;
-    GMII_rx_er      : out std_logic;
-    GMII_rxd        : out std_logic_vector(7 downto 0);
-    GMII_speed_mode : in  std_logic_vector(2 downto 0);
-    GMII_tx_clk     : out std_logic;
-    GMII_tx_en      : in  std_logic;
-    GMII_tx_er      : in  std_logic;
-    GMII_txd        : in  std_logic_vector(7 downto 0);
-  
-    RGMII_rxd       : in  std_logic_vector(3 downto 0);
-    RGMII_rxclk     : in  std_logic;
-    RGMII_rxctl     : in  std_logic;
-    RGMII_txd       : out std_logic_vector(3 downto 0);
-    RGMII_txclk     : out std_logic;
-    RGMII_txctl     : out std_logic;
-  
-    Speed1000En     : out std_logic;
-    Speed100En      : out std_logic;
-    Speed10En       : out std_logic
-  );
-  end component Andromeda_XZU65_gmii2rgmii;
+  end component en_gmii2rgmii;
 
   ----------------------------------------------------------------------------------------------------
   -- signal declarations
@@ -395,6 +374,7 @@ architecture rtl of Andromeda_XZU65_ST1 is
   signal Clk100           : std_logic;
   signal Clk50            : std_logic;
   signal Rst_N            : std_logic;
+  signal SYSMON_MUXADDR   : std_logic_vector(4 downto 0);
   signal MDIO_mdio_i      : std_logic;
   signal MDIO_mdio_o      : std_logic;
   signal MDIO_mdio_t      : std_logic;
@@ -414,7 +394,6 @@ architecture rtl of Andromeda_XZU65_ST1 is
   signal GMII_tx_en       : std_logic;
   signal GMII_tx_er       : std_logic;
   signal GMII_txd         : std_logic_vector(7 downto 0);
-  signal VMON_A           : std_logic_vector(1 downto 0);
   signal LED_N_PL         : std_logic_vector(3 downto 0);
   signal LedCount         : unsigned(23 downto 0);
   
@@ -432,6 +411,9 @@ begin
       Clk100               => Clk100,
       Clk50                => Clk50,
       Rst_N                => Rst_N,
+      SYSMON_vp            => SYSMON_VP,
+      SYSMON_vn            => SYSMON_VN,
+      SYSMON_addr          => SYSMON_MUXADDR,
       C0_SYS_CLK_clk_n     => CLK100_PL_N,
       C0_SYS_CLK_clk_p     => CLK100_PL_P,
       C0_DDR4_act_n        => DDR4PL_ACT_N,
@@ -468,7 +450,6 @@ begin
       GMII_tx_en           => GMII_tx_en,
       GMII_tx_er           => GMII_tx_er,
       GMII_txd             => GMII_txd,
-      VMON_A               => VMON_A,
       LED_N_PL             => LED_N_PL
     );
   
@@ -478,6 +459,9 @@ begin
   	I => CLK_USR_P,
   	IB => CLK_USR_N
   );
+  
+  VMON_A0 <= SYSMON_MUXADDR(0);
+  VMON_A1 <= SYSMON_MUXADDR(1);
   
   hdmi_clock_buf: component OBUFDS
     port map (
@@ -493,7 +477,7 @@ begin
       T => MDIO_mdio_t
     );
   
-  i_gmii2rgmii : Andromeda_XZU65_gmii2rgmii
+  i_gmii2rgmii : en_gmii2rgmii
     port map (
       Clk125          => ETH_CLK125,
       Clk125_90       => ETH_CLK125_90,
@@ -525,12 +509,9 @@ begin
       Speed10En       => open
     );
   
-  ETH1_RESET_N        <= ETH_resetn;
+  ETH1_RESET_N <= ETH_resetn;
   LED2 <= 'Z';
   LED3 <= 'Z';
-  
-  VMON_A0 <= VMON_A(0);
-  VMON_A1 <= VMON_A(1);
   
   process (Clk50)
   begin

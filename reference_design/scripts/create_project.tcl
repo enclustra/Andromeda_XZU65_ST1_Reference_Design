@@ -31,27 +31,33 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 add_files -norecurse -fileset sources_1 [glob -type f -directory src *.{vhd,edn}]
 add_files -norecurse -fileset constrs_1 [glob -type f -directory src *.{tcl,xdc}]
 
-# re-create block design
+# Re-create block design
 # contains PS settings, IP instances, DDR settings
 # ################################################
 source scripts/${project_name}_bd.tcl
 # ################################################
 
-# handle list of generics at level top
+# Handle list of generics at level top
 if {[info exists generics]} {
-	set list [get_property "generic" $obj]
-	lappend list ${generics}
-	set_property "generic" ${list} $obj
+    set list [get_property "generic" $obj]
+    lappend list ${generics}
+    set_property "generic" ${list} $obj
 }
 
-# add the settings.tcl file to synth and implementation tcl.pre
+# Add the settings.tcl file to synth and implementation tcl.pre
 set settings_file [file join scripts settings.tcl]
 set norm_settings_file [file normalize $settings_file]
 add_files -fileset utils_1 -norecurse $settings_file
 set_property STEPS.SYNTH_DESIGN.TCL.PRE [ get_files $norm_settings_file -of [get_fileset utils_1] ] [get_runs synth_1]
 set_property STEPS.INIT_DESIGN.TCL.PRE [ get_files $norm_settings_file -of [get_fileset utils_1] ] [get_runs impl_1]
 
-# timing constraints are only relevant for implementation
+# Use timing constraints only for implementation
 set_property used_in_synthesis false [get_files -filter {NAME =~ *_timing.tcl}]
+
+# location constraints are only relevant for implementation
+if {[llength [get_files -filter {NAME =~ *_loc.tcl}]] != 0} {
+    set_property used_in_synthesis false [get_files -filter {NAME =~ *_loc.tcl}]
+    reorder_files -fileset constrs_1 -back [get_files -filter {NAME =~ *_loc.tcl}]
+}
 
 puts "INFO: END of [info script]"

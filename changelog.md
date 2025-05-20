@@ -1,3 +1,6 @@
+## 2024.1_v1.0.2
+  * No Changes
+
 ## 2024.1_v1.0.1
 * Add CLK_USR IOBUFDS instance to top level VHDL
 * Refactor documentation

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------------------------------
-# Copyright (c) 2024 by Enclustra GmbH, Switzerland.
+# Copyright (c) 2025 by Enclustra GmbH, Switzerland.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this hardware, software, firmware, and associated documentation files (the
@@ -18,4 +18,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # PRODUCT OR THE USE OR OTHER DEALINGS IN THE PRODUCT.
 # ----------------------------------------------------------------------------------------------------
+# False paths for PL SYSMON multiplexer select lines
+set_false_path -to [get_ports {VMON_A0}]
+set_false_path -to [get_ports {VMON_A1}]
+# False path for PL DDR Reset output
+set_false_path -to [get_ports {DDR4PL_RST_N}]
+# False paths for LEDs
+set_false_path -to [get_ports {XZU65_LED0_N}]
+set_false_path -to [get_ports {XZU65_LED1_N}]
+set_false_path -to [get_ports {XZU65_LED2_N}]
+set_false_path -to [get_ports {XZU65_LED3_N}]
 

@@ -1,0 +1,334 @@
+From 8c161ecefedbc97bb7d5d3fefa13e3ccd1b13896 Mon Sep 17 00:00:00 2001
+From: Andreas Buerkler <andreas.buerkler@enclustra.com>
+Date: Tue, 20 May 2025 10:23:43 +0000
+Subject: [PATCH 1/4] Prepare KSZ9131 driver to add patches
+
+---
+ drivers/net/phy/micrel_ksz90x1.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/net/phy/micrel_ksz90x1.c b/drivers/net/phy/micrel_ksz90x1.c
+index ffc3c987eaa..c48ae6e88f3 100644
+--- a/drivers/net/phy/micrel_ksz90x1.c
++++ b/drivers/net/phy/micrel_ksz90x1.c
+@@ -8,7 +8,6 @@
+  * (C) Copyright 2017 Adaptrum, Inc.
+  * Written by Alexandru Gagniuc <alex.g@adaptrum.com> for Adaptrum, Inc.
+  */
+-#include <common.h>
+ #include <dm.h>
+ #include <env.h>
+ #include <errno.h>
+@@ -229,7 +228,6 @@ int ksz9021_phy_extended_read(struct phy_device *phydev, int regnum)
+ 	return phy_read(phydev, MDIO_DEVAD_NONE, MII_KSZ9021_EXTENDED_DATAR);
+ }
+ 
+-
+ static int ksz9021_phy_extread(struct phy_device *phydev, int addr, int devaddr,
+ 			       int regnum)
+ {
+-- 
+2.37.6
+
+From 1e7565035166bf92e0456cbe2339f51188d30084 Mon Sep 17 00:00:00 2001
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Date: Fri, 28 Feb 2025 12:47:53 +0000
+Subject: [PATCH 2/4] net: phy: ksz90x1: Handle ksz9131 LED errata
+
+Micrel KSZ9131 PHY LED behavior is not correct when configured in
+Individual Mode, LED1 (Activity LED) is in the ON state when there is
+no-link.
+
+Workaround this by setting bit 9 of register 0x1e after verifying that
+the LED configuration is Individual Mode.
+
+This issue is described in KSZ9131RNX Silicon Errata DS80000693B [*]
+and according to that it will not be corrected in a future silicon
+revision.
+
+[*] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9131RNX-Silicon-Errata-and-Data-Sheet-Clarification-80000863B.pdf
+
+Based on commit 0316c7e66bbd in the Linux kernel.
+
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de> # RK3588 Tiger
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+---
+ drivers/net/phy/micrel_ksz90x1.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/net/phy/micrel_ksz90x1.c b/drivers/net/phy/micrel_ksz90x1.c
+index c48ae6e88f3..ce7f2e2cc44 100644
+--- a/drivers/net/phy/micrel_ksz90x1.c
++++ b/drivers/net/phy/micrel_ksz90x1.c
+@@ -389,6 +389,12 @@ U_BOOT_PHY_DRIVER(ksz9031) = {
+ #define KSZ9131RN_DLL_ENABLE_DELAY	0
+ #define KSZ9131RN_DLL_DISABLE_DELAY	BIT(12)
+ 
++#define KSZ9131RN_COMMON_CTRL				0
++#define KSZ9131RN_COMMON_CTRL_INDIVIDUAL_LED_MODE	BIT(4)
++
++#define KSZ9131RN_LED_ERRATA_REG	0x1e
++#define KSZ9131RN_LED_ERRATA_BIT	BIT(9)
++
+ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+ {
+ 	struct phy_driver *drv = phydev->drv;
+@@ -436,6 +442,28 @@ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+ 	return ret;
+ }
+ 
++/* Silicon Errata DS80000693B
++ *
++ * When LEDs are configured in Individual Mode, LED1 is ON in a no-link
++ * condition. Workaround is to set register 0x1e, bit 9, this way LED1 behaves
++ * according to the datasheet (off if there is no link).
++ */
++static int ksz9131_led_errata(struct phy_device *phydev)
++{
++	int reg;
++
++	reg = phy_read_mmd(phydev, KSZ9131RN_MMD_COMMON_CTRL_REG,
++			   KSZ9131RN_COMMON_CTRL);
++	if (reg < 0)
++		return reg;
++
++	if (!(reg & KSZ9131RN_COMMON_CTRL_INDIVIDUAL_LED_MODE))
++		return 0;
++
++	return phy_modify(phydev, MDIO_DEVAD_NONE, KSZ9131RN_LED_ERRATA_REG,
++			    0, KSZ9131RN_LED_ERRATA_BIT);
++}
++
+ static int ksz9131_config(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -446,6 +474,10 @@ static int ksz9131_config(struct phy_device *phydev)
+ 			return ret;
+ 	}
+ 
++	ret = ksz9131_led_errata(phydev);
++	if (ret < 0)
++		return ret;
++
+ 	/* add an option to disable the gigabit feature of this PHY */
+ 	if (env_get("disable_giga")) {
+ 		unsigned features;
+-- 
+2.37.6
+
+From 12aaf22b6d919bda3e6094821b41797c969f83d9 Mon Sep 17 00:00:00 2001
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Date: Fri, 28 Feb 2025 12:47:54 +0000
+Subject: [PATCH 3/4] net: phy: ksz90x1: Load skew values from device tree
+
+Various signal skew values may be set in the device tree for the ksz9131
+Ethernet PHY. For example, the RZ/G2L board requires non-default values
+for rxc-skew-psec & txc-skew-psec.
+
+This is based on the ksz9131 phy driver in Linux v6.11.
+
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+---
+ drivers/net/phy/micrel_ksz90x1.c | 115 +++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+
+diff --git a/drivers/net/phy/micrel_ksz90x1.c b/drivers/net/phy/micrel_ksz90x1.c
+index ce7f2e2cc44..727c416fb25 100644
+--- a/drivers/net/phy/micrel_ksz90x1.c
++++ b/drivers/net/phy/micrel_ksz90x1.c
+@@ -395,6 +395,117 @@ U_BOOT_PHY_DRIVER(ksz9031) = {
+ #define KSZ9131RN_LED_ERRATA_REG	0x1e
+ #define KSZ9131RN_LED_ERRATA_BIT	BIT(9)
+ 
++#define KSZ9131RN_CONTROL_PAD_SKEW	4
++#define KSZ9131RN_RX_DATA_PAD_SKEW	5
++#define KSZ9131RN_TX_DATA_PAD_SKEW	6
++#define KSZ9131RN_CLK_PAD_SKEW		8
++
++#define KSZ9131RN_SKEW_5BIT_MAX		2400
++#define KSZ9131RN_SKEW_4BIT_MAX		800
++#define KSZ9131RN_OFFSET		700
++#define KSZ9131RN_STEP			100
++
++static int ksz9131_of_load_skew_values(struct phy_device *phydev,
++				       ofnode of_node,
++				       u16 reg, size_t field_sz,
++				       const char *field[], u8 numfields)
++{
++	int val[4] = {-(1 + KSZ9131RN_OFFSET), -(2 + KSZ9131RN_OFFSET),
++		      -(3 + KSZ9131RN_OFFSET), -(4 + KSZ9131RN_OFFSET)};
++	int skewval, skewmax = 0;
++	int matches = 0;
++	u16 maxval;
++	u16 newval;
++	u16 mask;
++	int i;
++
++	/* psec properties in dts should mean x pico seconds */
++	if (field_sz == 5)
++		skewmax = KSZ9131RN_SKEW_5BIT_MAX;
++	else
++		skewmax = KSZ9131RN_SKEW_4BIT_MAX;
++
++	for (i = 0; i < numfields; i++)
++		if (!ofnode_read_s32(of_node, field[i], &skewval)) {
++			if (skewval < -KSZ9131RN_OFFSET)
++				skewval = -KSZ9131RN_OFFSET;
++			else if (skewval > skewmax)
++				skewval = skewmax;
++
++			val[i] = skewval + KSZ9131RN_OFFSET;
++			matches++;
++		}
++
++	if (!matches)
++		return 0;
++
++	if (matches < numfields)
++		newval = phy_read_mmd(phydev, KSZ9131RN_MMD_COMMON_CTRL_REG, reg);
++	else
++		newval = 0;
++
++	maxval = (field_sz == 4) ? 0xf : 0x1f;
++	for (i = 0; i < numfields; i++)
++		if (val[i] != -(i + 1 + KSZ9131RN_OFFSET)) {
++			mask = 0xffff;
++			mask ^= maxval << (field_sz * i);
++			newval = (newval & mask) |
++				(((val[i] / KSZ9131RN_STEP) & maxval)
++					<< (field_sz * i));
++		}
++
++	return phy_write_mmd(phydev, KSZ9131RN_MMD_COMMON_CTRL_REG, reg, newval);
++}
++
++static int ksz9131_of_load_all_skew_values(struct phy_device *phydev)
++{
++	const char *control_skews[2] = { "txen-skew-psec", "rxdv-skew-psec" };
++	const char *clk_skews[2] = { "rxc-skew-psec", "txc-skew-psec" };
++	const char *rx_data_skews[4] = {
++		"rxd0-skew-psec", "rxd1-skew-psec",
++		"rxd2-skew-psec", "rxd3-skew-psec"
++	};
++	const char *tx_data_skews[4] = {
++		"txd0-skew-psec", "txd1-skew-psec",
++		"txd2-skew-psec", "txd3-skew-psec"
++	};
++	struct ofnode_phandle_args phandle_args;
++	int ret;
++
++	/*
++	 * Silently ignore failure here as the device tree is not required to
++	 * contain a phy node.
++	 */
++	if (dev_read_phandle_with_args(phydev->dev, "phy-handle", NULL, 0, 0,
++				       &phandle_args))
++		return 0;
++
++	if (!ofnode_valid(phandle_args.node))
++		return 0;
++
++	ret = ksz9131_of_load_skew_values(phydev, phandle_args.node,
++					  KSZ9131RN_CLK_PAD_SKEW, 5,
++					  clk_skews, 2);
++	if (ret < 0)
++		return ret;
++
++	ret = ksz9131_of_load_skew_values(phydev, phandle_args.node,
++					  KSZ9131RN_CONTROL_PAD_SKEW, 4,
++					  control_skews, 2);
++	if (ret < 0)
++		return ret;
++
++	ret = ksz9131_of_load_skew_values(phydev, phandle_args.node,
++					  KSZ9131RN_RX_DATA_PAD_SKEW, 4,
++					  rx_data_skews, 4);
++	if (ret < 0)
++		return ret;
++
++	return ksz9131_of_load_skew_values(phydev, phandle_args.node,
++					   KSZ9131RN_TX_DATA_PAD_SKEW, 4,
++					   tx_data_skews, 4);
++}
++
+ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+ {
+ 	struct phy_driver *drv = phydev->drv;
+@@ -474,6 +585,10 @@ static int ksz9131_config(struct phy_device *phydev)
+ 			return ret;
+ 	}
+ 
++	ret = ksz9131_of_load_all_skew_values(phydev);
++	if (ret < 0)
++		return ret;
++
+ 	ret = ksz9131_led_errata(phydev);
+ 	if (ret < 0)
+ 		return ret;
+-- 
+2.37.6
+
+From 8c164dd179b2a4743b54b86045f649e5158e54b0 Mon Sep 17 00:00:00 2001
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Date: Fri, 28 Feb 2025 12:47:55 +0000
+Subject: [PATCH 4/4] net: phy: ksz90x1: Simplify ksz9131_config_rgmii_delay
+
+We can call phy_modify_mmd() instead of manually calling drv->readext()
+and drv->writeext().
+
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+---
+ drivers/net/phy/micrel_ksz90x1.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/net/phy/micrel_ksz90x1.c b/drivers/net/phy/micrel_ksz90x1.c
+index 727c416fb25..ee8eae1efd9 100644
+--- a/drivers/net/phy/micrel_ksz90x1.c
++++ b/drivers/net/phy/micrel_ksz90x1.c
+@@ -508,8 +508,7 @@ static int ksz9131_of_load_all_skew_values(struct phy_device *phydev)
+ 
+ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+ {
+-	struct phy_driver *drv = phydev->drv;
+-	u16 rxcdll_val, txcdll_val, val;
++	u16 rxcdll_val, txcdll_val;
+ 	int ret;
+ 
+ 	switch (phydev->interface) {
+@@ -533,24 +532,15 @@ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
+ 		return 0;
+ 	}
+ 
+-	val = drv->readext(phydev, 0, KSZ9131RN_MMD_COMMON_CTRL_REG,
+-			   KSZ9131RN_RXC_DLL_CTRL);
+-	val &= ~KSZ9131RN_DLL_CTRL_BYPASS;
+-	val |= rxcdll_val;
+-	ret = drv->writeext(phydev, 0, KSZ9131RN_MMD_COMMON_CTRL_REG,
+-			    KSZ9131RN_RXC_DLL_CTRL, val);
+-	if (ret)
++	ret = phy_modify_mmd(phydev, KSZ9131RN_MMD_COMMON_CTRL_REG,
++			     KSZ9131RN_RXC_DLL_CTRL, KSZ9131RN_DLL_CTRL_BYPASS,
++			     rxcdll_val);
++	if (ret < 0)
+ 		return ret;
+ 
+-	val = drv->readext(phydev, 0, KSZ9131RN_MMD_COMMON_CTRL_REG,
+-			   KSZ9131RN_TXC_DLL_CTRL);
+-
+-	val &= ~KSZ9131RN_DLL_CTRL_BYPASS;
+-	val |= txcdll_val;
+-	ret = drv->writeext(phydev, 0, KSZ9131RN_MMD_COMMON_CTRL_REG,
+-			    KSZ9131RN_TXC_DLL_CTRL, val);
+-
+-	return ret;
++	return phy_modify_mmd(phydev, KSZ9131RN_MMD_COMMON_CTRL_REG,
++			      KSZ9131RN_TXC_DLL_CTRL, KSZ9131RN_DLL_CTRL_BYPASS,
++			      txcdll_val);
+ }
+ 
+ /* Silicon Errata DS80000693B
+-- 
+2.37.6
+

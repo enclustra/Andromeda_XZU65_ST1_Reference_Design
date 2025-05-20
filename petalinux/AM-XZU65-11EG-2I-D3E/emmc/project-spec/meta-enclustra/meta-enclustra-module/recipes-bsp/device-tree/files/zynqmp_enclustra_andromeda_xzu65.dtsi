@@ -9,47 +9,14 @@
 	};
 };
 
-&gem3 {
-	status = "okay";
-	/delete-property/ local-mac-address;
-	// mode=rgmii-id enables additional 2ns RX and TX clock delay
-	phy-mode = "rgmii-id";
-	phy-handle = <&phy3>;
-	mdio {
-		// KSZ9131
-		phy3: phy@3 {
-			reg = <3>;
-
-			// 2 ns TX clock delay
-			txc-skew-psec = <0>;
-			txen-skew-psec = <0>;
-
-			txd0-skew-psec = <0>;
-			txd1-skew-psec = <0>;
-			txd2-skew-psec = <0>;
-			txd3-skew-psec = <0>;
-
-			// 2 ns RX clock delay
-			rxc-skew-psec = <0>;
-			rxdv-skew-psec = <0>;
-
-			rxd0-skew-psec = <0>;
-			rxd1-skew-psec = <0>;
-			rxd2-skew-psec = <0>;
-			rxd3-skew-psec = <0>;
-		};
-	};
-};
-
 &gem1 {
-	status = "okay";
 	/delete-property/ local-mac-address;
 	// mode=rgmii disables additional 2ns RX and TX clock delay
 	phy-mode = "rgmii";
-	phy-handle = <&phy7>;
+	phy-handle = <&phy1>;
 	mdio {
 		// KSZ9131
-		phy7: phy@7 {
+		phy1: phy@7 {
 			reg = <7>;
 
 			// 0 ns TX clock delay
@@ -73,8 +40,38 @@
 	};
 };
 
+&gem3 {
+	/delete-property/ local-mac-address;
+	// mode=rgmii-id enables additional 2ns RX and TX clock delay
+	phy-mode = "rgmii-id";
+	phy-handle = <&phy0>;
+	mdio {
+		// KSZ9131
+		phy0: phy@3 {
+			reg = <3>;
+
+			// 2 ns TX clock delay
+			txc-skew-psec = <0>;
+			txen-skew-psec = <0>;
+
+			txd0-skew-psec = <0>;
+			txd1-skew-psec = <0>;
+			txd2-skew-psec = <0>;
+			txd3-skew-psec = <0>;
+
+			// 2 ns RX clock delay
+			rxc-skew-psec = <0>;
+			rxdv-skew-psec = <0>;
+
+			rxd0-skew-psec = <0>;
+			rxd1-skew-psec = <0>;
+			rxd2-skew-psec = <0>;
+			rxd3-skew-psec = <0>;
+		};
+	};
+};
+
 &qspi {
-	status = "okay";
 	#address-cells = <1>;
 	#size-cells = <0>;
 	is-dual = <1>;
@@ -92,7 +89,6 @@
 };
 
 &psgtr {
-	status = "okay";
 	clocks = <&ref100>, <&ref135>;
 	clock-names = "ref2", "ref3";
 };
@@ -112,11 +108,11 @@
 		status = "okay";
 		clock-frequency = <100000>;
 		atsha204a@64 {
-			status = "okay";
 			compatible = "atmel,atsha204a", "atmel,atsha204-i2c";
 			reg = <0x64>;
 		};
 	};
-	i2c_user: i2c@ff030000 {};
+	i2c_user: i2c@ff030000 {
+		clock-frequency = <100000>;
+	};
 };
-

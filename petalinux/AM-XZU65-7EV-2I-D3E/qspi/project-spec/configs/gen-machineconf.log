@@ -1,14 +1,14 @@
-2024-12-12 08:25:21,684 - [DEBUG] Using xsct from : /tools/Xilinx/PetaLinux/2024.1/components/xsct/bin/xsct
-2024-12-12 08:25:21,684 - [INFO] Getting Platform info from HW file
-2024-12-12 08:25:21,684 - [DEBUG] Using the soc_family specified by user:zynqmp
-2024-12-12 08:25:21,701 - [DEBUG] Hardware Configuration:
-2024-12-12 08:25:21,701 - [DEBUG] MACHINE     = "None"
-2024-12-12 08:25:21,701 - [DEBUG] DEVICE_ID   = "xczu7ev"
-2024-12-12 08:25:21,701 - [DEBUG] SOC_FAMILY  = "zynqmp"
-2024-12-12 08:25:21,701 - [DEBUG] SOC_VARIANT = "ev"
-2024-12-12 08:25:21,738 - [INFO] Silentconfig project
-2024-12-12 08:25:21,738 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/config conf /builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/configs/Kconfig
-2024-12-12 08:25:21,750 - [DEBUG] *
+2025-05-20 15:13:48,500 - [DEBUG] Using xsct from : /tools/Xilinx/PetaLinux/2024.1/components/xsct/bin/xsct
+2025-05-20 15:13:48,500 - [INFO] Getting Platform info from HW file
+2025-05-20 15:13:48,500 - [DEBUG] Using the soc_family specified by user:zynqmp
+2025-05-20 15:13:48,518 - [DEBUG] Hardware Configuration:
+2025-05-20 15:13:48,518 - [DEBUG] MACHINE     = "None"
+2025-05-20 15:13:48,518 - [DEBUG] DEVICE_ID   = "xczu7ev"
+2025-05-20 15:13:48,518 - [DEBUG] SOC_FAMILY  = "zynqmp"
+2025-05-20 15:13:48,518 - [DEBUG] SOC_VARIANT = "ev"
+2025-05-20 15:13:48,521 - [INFO] Silentconfig project
+2025-05-20 15:13:48,521 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/config conf /builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/configs/Kconfig
+2025-05-20 15:13:48,526 - [DEBUG] *
 * PetaLinux System Configuration
 *
 ZYNQMP Configuration (SYSTEM_ZYNQMP) [Y/?] y
@@ -123,7 +123,7 @@ choice[1-2?]: Advanced Flash Auto Configuration (SUBSYSTEM_FLASH__ADVANCED_AUTOC
 * partition 0
 *
 name (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART0_NAME) [boot] 
-size (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART0_SIZE) [0x1f00000] 
+size (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART0_SIZE) [0x3f00000] 
 *
 * partition 1
 *
@@ -138,7 +138,7 @@ size (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART2_SIZE) [0x80000]
 * partition 3
 *
 name (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART3_NAME) [kernel] 
-size (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART3_SIZE) [0x2000000] 
+size (SUBSYSTEM_FLASH_PSU_QSPI_0_BANKLESS_PART3_SIZE) [0x4000000] 
 *
 * partition 4
 *
@@ -225,10 +225,10 @@ QSPI/OSPI Kernel offset (SUBSYSTEM_UBOOT_QSPI_KERNEL_OFFSET) [0xF00000]
 QSPI/OSPI Kernel size (SUBSYSTEM_UBOOT_QSPI_KERNEL_SIZE) [0x1D00000] 
 QSPI/OSPI Ramdisk offset (SUBSYSTEM_UBOOT_QSPI_RAMDISK_OFFSET) [0x4000000] 
 QSPI/OSPI Ramdisk size (SUBSYSTEM_UBOOT_QSPI_RAMDISK_SIZE) [0x4000000] 
-QSPI/OSPI fit image offset (SUBSYSTEM_UBOOT_QSPI_FIT_IMAGE_OFFSET) [0x2000000] 
-QSPI/OSPI fit image size (SUBSYSTEM_UBOOT_QSPI_FIT_IMAGE_SIZE) [0x2000000] 
-QSPI/OSPI Boot script offset (SUBSYSTEM_UBOOT_QSPI_BOOTSCR_OFFSET) [AUTO] 
-QSPI/OSPI Boot script size (SUBSYSTEM_UBOOT_QSPI_BOOTSCR_SIZE) [AUTO] 
+QSPI/OSPI fit image offset (SUBSYSTEM_UBOOT_QSPI_FIT_IMAGE_OFFSET) [0x4000000] 
+QSPI/OSPI fit image size (SUBSYSTEM_UBOOT_QSPI_FIT_IMAGE_SIZE) [0x4000000] 
+QSPI/OSPI Boot script offset (SUBSYSTEM_UBOOT_QSPI_BOOTSCR_OFFSET) [0x3f80000] 
+QSPI/OSPI Boot script size (SUBSYSTEM_UBOOT_QSPI_BOOTSCR_SIZE) [0x80000] 
 *
 * NAND image offsets
 *
@@ -266,7 +266,7 @@ Copy final images to tftpboot (SUBSYSTEM_COPY_TO_TFTPBOOT) [N/y/?]
 *
 Host name (SUBSYSTEM_HOSTNAME) [AM-XZU65-7EV-2I-D3E-ST1-QSPI] 
 Product name (SUBSYSTEM_PRODUCT) [AM-XZU65-7EV-2I-D3E-ST1-QSPI] 
-Firmware Version (SUBSYSTEM_FW_VERSION) [2024.1_v1.0.1] 
+Firmware Version (SUBSYSTEM_FW_VERSION) [2024.1_v1.0.2] 
 *
 * Yocto Settings
 *
@@ -310,11 +310,11 @@ user layer 0 (USER_LAYER_0) [${PROOT}/project-spec/meta-enclustra/meta-enclustra
   user layer 1 (USER_LAYER_1) [${PROOT}/project-spec/meta-enclustra/meta-enclustra-module] 
 user layer 2 (USER_LAYER_2) [] 
 #
-# configuration written to /builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/config
+# configuration written to /builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/config
 #
-2024-12-12 08:25:21,804 - [INFO] Silentconfig rootfs
-2024-12-12 08:25:21,804 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfs_config conf /builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfsconfigs/Kconfig
-2024-12-12 08:25:21,814 - [DEBUG] *
+2025-05-20 15:13:48,568 - [INFO] Silentconfig rootfs
+2025-05-20 15:13:48,568 - [DEBUG] Running CMD: yes "" | env KCONFIG_CONFIG=/builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfs_config conf /builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfsconfigs/Kconfig
+2025-05-20 15:13:48,576 - [DEBUG] *
 * Configuration
 *
 *
@@ -3869,6 +3869,6 @@ Create new Groups (CREATE_NEW_GROUPS) [aie;]
 Add Users to Groups (ADD_USERS_TO_GROUPS) [petalinux:audio,video,aie,input;] 
 Add Users to Sudo users (ADD_USERS_TO_SUDOERS) [petalinux] 
 #
-# configuration written to /builds/Petalinux_XZU65_8620941727/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfs_config
+# configuration written to /builds/Petalinux_XZU65_10093330086/scripts/build/Andromeda_XZU65_ST1/Petalinux/AM-XZU65-7EV-2I-D3E-ST1-QSPI/project-spec/configs/rootfs_config
 #
-2024-12-12 08:25:21,817 - [INFO] Generating configuration files
+2025-05-20 15:13:48,578 - [INFO] Generating configuration files
